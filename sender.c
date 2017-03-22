@@ -6,6 +6,8 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
+#define PORT "9999" // the port to advertise
+#define HOST "localhost" 
 
 int main(){
     int status;
@@ -19,7 +21,7 @@ int main(){
     hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
 
     // port is the second argument of getaddrinfo, NULL defaults to the host IP address
-    if ((status = getaddrinfo("localhost", "9999", &hints, &res)) != 0) {
+    if ((status = getaddrinfo(HOST, PORT, &hints, &res)) != 0) {
         fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
         exit(1);
     }
@@ -42,6 +44,18 @@ int main(){
     if((status = connect(sockfd, res->ai_addr, res->ai_addrlen)) == -1){
         fprintf(stderr, "connect error: %s\n", gai_strerror(status));
         exit(1);    
+    }
+
+
+    char *msg = "ESSA EH A MENSAGEM";
+    int len, bytes_sent;
+
+    len = strlen(msg);
+    bytes_sent = send(sockfd, msg, len, 0);
+
+    if(bytes_sent == -1){
+        fprintf(stderr, "send error: %s\n", gai_strerror(status));
+        exit(1);
     }
 
     freeaddrinfo(res); // free the linked-list
