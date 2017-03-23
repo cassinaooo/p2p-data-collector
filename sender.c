@@ -6,7 +6,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
-#define PORT "9999" // the port to advertise
+#define PORT "35000" // the port to advertise
 #define HOST "localhost" 
 
 int main(){
@@ -32,20 +32,21 @@ int main(){
 
     sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 
-    if(sockfd == -1){
+    if(sockfd < 0){
         // error checking
-        fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(sockfd));
+        fprintf(stderr, "getaddrinfo error: %s\n", strerror(sockfd));
         exit(1);        
     }
 
     // connect!
     
 
-    if((status = connect(sockfd, res->ai_addr, res->ai_addrlen)) == -1){
-        fprintf(stderr, "connect error: %s\n", gai_strerror(status));
+    if((status = connect(sockfd, res->ai_addr, res->ai_addrlen)) < 0){
+        fprintf(stderr, "connect error: %s\n", strerror(sockfd));
         exit(1);    
     }
 
+    freeaddrinfo(res); // free the linked-list
 
     char *msg = "ESSA EH A MENSAGEM";
     int len, bytes_sent;
@@ -53,12 +54,10 @@ int main(){
     len = strlen(msg);
     bytes_sent = send(sockfd, msg, len, 0);
 
-    if(bytes_sent == -1){
-        fprintf(stderr, "send error: %s\n", gai_strerror(status));
+    if(bytes_sent < 0){
+        fprintf(stderr, "send error: %s\n", strerror(status));
         exit(1);
     }
-
-    freeaddrinfo(res); // free the linked-list
 
     return 0;
 }

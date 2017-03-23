@@ -6,7 +6,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
-#define PORT "9999"  // the port users will be connecting to
+#define PORT "35000"  // the port users will be connecting to
 #define BACKLOG 10     // how many pending connections queue will hold
 
 int main(){
@@ -33,19 +33,24 @@ int main(){
 
     sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 
-    if(sockfd == -1){
-        // error checking
-        fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(sockfd));
+    if(sockfd < 0){
+        fprintf(stderr, "socket error: %s\n", strerror(sockfd));
         exit(1);        
     }
     
     // bind it to the port we passed in to getaddrinfo():
-    bind(sockfd, res->ai_addr, res->ai_addrlen);
+    status = bind(sockfd, res->ai_addr, res->ai_addrlen);
+
+    if(status < 0){
+        fprintf(stderr, "bind error: %s\n", strerror(status));
+    }
+
+    freeaddrinfo(res); // free the linked-list
 
     status = listen(sockfd, BACKLOG);
 
-    if(status == -1){
-        fprintf(stderr, "listen error: %s\n", gai_strerror(status));
+    if(status < 0){
+        fprintf(stderr, "listen error: %s\n", strerror(status));
     }
 
     struct sockaddr_storage their_addr;
@@ -55,18 +60,20 @@ int main(){
     addr_size = sizeof their_addr;
     new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &addr_size);
 
-    if(new_fd == -1){
-        fprintf(stderr, "accept error: %s\n", gai_strerror(new_fd));
+    if(new_fd < 0){
+        fprintf(stderr, "accept error: %s\n", strerror(new_fd));
         exit(1);
     }
+
+    char *hostname;
 
     char msg[200];
     int msg_size = sizeof msg;
 
     status = recv(new_fd, &msg, msg_size, 0);
 
-    if(status == -1){
-        fprintf(stderr, "recv error: %s\n", gai_strerror(status));
+    if(status < 0){
+        fprintf(stderr, "recv error: %s\n", strerror(status));
         exit(1);
     }
 
@@ -76,8 +83,6 @@ int main(){
         printf("%s\n", "connection closed");
         exit(0);
     }
-
-    freeaddrinfo(res); // free the linked-list
 
     return 0;
 }
