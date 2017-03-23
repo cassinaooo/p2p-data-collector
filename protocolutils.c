@@ -26,7 +26,7 @@ void printheader(const Header * h){
     printf("%s\n\n", "------ HEADER END -------");     
 }
 
-Slice *newslice(Header * header, int slice_no, const char * data){
+Slice *newslice(Header * header, int sliceno, const char * data){
     
     Slice *new = malloc(sizeof(Slice));
 
@@ -34,7 +34,7 @@ Slice *newslice(Header * header, int slice_no, const char * data){
 
     strcpy(new->data, data);     
 
-    new->slice_no = slice_no;
+    new->sliceno = sliceno;
     
     return new;
 } 
@@ -42,7 +42,7 @@ Slice *newslice(Header * header, int slice_no, const char * data){
 void printslice(const Slice * s){
     
     printf("%s\n", "------ SLICE BEGIN -------");
-    printf("slice no: %d\n", s->slice_no);
+    printf("slice no: %d\n", s->sliceno);
     printf("data: %s\n", s->data);
     printf("%s\n\n", "------ SLICE END -------");     
 }

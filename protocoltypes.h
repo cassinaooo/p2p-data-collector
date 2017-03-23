@@ -8,6 +8,7 @@ typedef struct {
 } Header;
 
 typedef struct {
-    int slice_no;
+    int datalen;
+    int sliceno;
     char *data;
 } Slice;

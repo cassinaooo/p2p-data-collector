@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
     char *buf;
 
     /* Try the first command-line argument as a file name */
-    file_size = slurp("input.txt", &buf, false);
+    file_size = slurp("teste1Postgres.png", &buf, false);
 
     /* Bail if we get a negative file size back from slurp() */
     if( file_size < 0L ) {
