@@ -1,4 +1,4 @@
-#include "serversockets.h"
+#include "receiversockets.h"
 #include "protocolutils.h"
 
 #define PORT "35000"  // the port users will be connecting to

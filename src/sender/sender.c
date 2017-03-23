@@ -1,4 +1,6 @@
-#include "sendsocket.h"
+#include <string.h>
+
+#include "sendersockets.h"
 
 #define PORT "35000" // the port to connect to
 #define HOST "localhost" 

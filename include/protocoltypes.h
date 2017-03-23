@@ -1,3 +1,5 @@
+#ifndef __PROTOCOL_TYPES__
+#define __PROTOCOL_TYPES__
 
 typedef struct {
     char clientname[255];
@@ -12,3 +14,5 @@ typedef struct {
     int sliceno;
     char *data;
 } Slice;
+
+#endif

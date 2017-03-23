@@ -1,3 +1,4 @@
+#include "protocolutils.h"
 
 Header *newheader(
         char * clientname, char * servername, 

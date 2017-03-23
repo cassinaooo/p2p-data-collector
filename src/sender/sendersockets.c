@@ -1,3 +1,5 @@
+#include "sendersockets.h"
+
 /* 
     returns a socket ready to make send calls
     to a specific port in a host

@@ -1,6 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
+#include "fileutils.h"
 
 /*
  * 'slurp' reads the file identified by 'path' into a character buffer
