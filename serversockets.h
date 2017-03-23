@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
-#include "sendsocket.c"
+#include "serversockets.c"
 
-int newsendsocket(char *port, char *host);
+int newlistensocket(char *port);
+int newrecvsocket(int sockfd);

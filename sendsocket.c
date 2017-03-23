@@ -1,11 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h> /* memset */
-
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-
 /* 
     returns a socket ready to make send calls
     to a specific port in a host
