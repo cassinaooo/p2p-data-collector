@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include "sendersockets.h"
+#include "protocolutils.h"
 
 void sendfile();
 

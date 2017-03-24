@@ -18,24 +18,20 @@ void recvfile(){
     // socket to a new connection, blocks until a connection to PORT is made
     int new_fd = newrecvsocket(sockfd);
 
-    char msg[18];
-    int msg_size = sizeof msg;
+    Header *h = malloc(sizeof(Header));
+    int msg_size = sizeof(Header);
 
-    status = recv(new_fd, &msg, msg_size, 0);
+    printf("aguardando mensagem de tamanho: %d\n", msg_size);
+
+    status = recv(new_fd, h, msg_size, 0);
 
     if(status < 0){
-        fprintf(stderr, "recv error: %s\n", strerror(status));
-        exit(1);
+        fprintf(stderr, "recv error: %s\n", strerror(new_fd));
     }
 
-    printf ("mensagem de tamanho: %d\n", msg_size);
-    printf("mensagem em char: %s\n", msg);
+    printf ("HEADER RECEBIDO\n");
 
-    for(int i = 0; i < msg_size; i++){
-        printf("%x", msg[i]);
-    }
-
-    printf("\n");
+    printheader(h);
 
     if(status == 0){
         printf("%s\n", "connection closed");
