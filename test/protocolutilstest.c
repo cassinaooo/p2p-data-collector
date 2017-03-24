@@ -21,10 +21,9 @@ void testslicecreation(Header *h){
     }
 }
 
-int main(){
+void protocolutilstestmain(){
     Header *h = testheadercreation();
     testslicecreation(h);
-    return 0;
 }
 
 

@@ -2,11 +2,23 @@ PROTOCOLDIR = src/protocol
 SENDERDIR = src/sender
 RECEIVERDIR = src/receiver
 
-sender : $(SENDERDIR)/%.c $(PROTOCOLDIR)/%.c 
+NO_MAIN = $(shell find | grep [.]c | grep -v receiver[.]c | grep -v sender[.]c)
+
+all:
+	make sender
+	make receiver
+
+sender : $(SENDERDIR)/*.c $(PROTOCOLDIR)/*.c 
+	mkdir -p bin
 	gcc $^ -I include -o bin/sender.out
 
-receiver : src/protocol/protocolutils.c src/receiver/receiver.c src/receiver/receiversockets.c
+receiver : $(RECEIVERDIR)/*.c $(PROTOCOLDIR)/*.c 
+	mkdir -p bin
 	gcc $^ -I include -o bin/receiver.out
 
+tests : $(NO_MAIN)
+	mkdir -p bin
+	gcc $^ -I include -o bin/test.out
+
 clean : 
-	rm -rf 
+	rm -rf bin

@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "filereader.h"
+#include "fileutils.h"
 
 /*
  * Demonstrates a call to 'slurp'.
  */
-int main(int argc, char *argv[]) {
+void filereadertestmain(){
     long  file_size;
     char *buf;
 
@@ -24,6 +24,5 @@ int main(int argc, char *argv[]) {
 
     /* Remember to free() memory allocated by slurp() */
     free( buf );
-    return 0;
 }
 
