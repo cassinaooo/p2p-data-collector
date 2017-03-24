@@ -1,24 +1,44 @@
-PROTOCOLDIR = src/protocol
-SENDERDIR = src/sender
-RECEIVERDIR = src/receiver
-
-NO_MAIN = $(shell find | grep [.]c | grep -v receiver[.]c | grep -v sender[.]c)
-
-all:
+all : 
+	mkdir -p bin
+	mkdir -p build
+	
+	make tests
 	make sender
 	make receiver
 
-sender : $(SENDERDIR)/*.c $(PROTOCOLDIR)/*.c 
-	mkdir -p bin
-	gcc $^ -I include -o bin/sender.out
+tests : build/sendersockets.o build/sender.o build/receiver.o build/receiversockets.o build/fileutils.o build/protocolutils.o build/tester.o build/testmain.o
+	gcc -I include $^ -o bin/tester
 
-receiver : $(RECEIVERDIR)/*.c $(PROTOCOLDIR)/*.c 
-	mkdir -p bin
-	gcc $^ -I include -o bin/receiver.out
+sender : build/sendersockets.o build/sender.o build/fileutils.o build/protocolutils.o build/sendermain.o
+	gcc -I include $^ -o bin/sender
 
-tests : $(NO_MAIN)
-	mkdir -p bin
-	gcc $^ -I include -o bin/test.out
+receiver : build/receiver.o build/receiversockets.o build/protocolutils.o build/receivermain.o
+	gcc -I include $^ -o bin/receiver
+
+build/sendersockets.o : src/sender/sendersockets.c
+	gcc -I include $< -c -o $@
+build/sender.o : src/sender/sender.c
+	gcc -I include $< -c -o $@
+build/receiver.o : src/receiver/receiver.c
+	gcc -I include $< -c -o $@
+build/receiversockets.o : src/receiver/receiversockets.c
+	gcc -I include $< -c -o $@
+build/fileutils.o : src/utils/fileutils.c
+	gcc -I include $< -c -o $@
+build/protocolutils.o : src/utils/protocolutils.c
+	gcc -I include $< -c -o $@
+build/tester.o : src/tester.c
+	gcc -I include $< -c -o $@
+
+build/receivermain.o : src/exec/receivermain.c
+	gcc -I include $< -c -o $@
+build/sendermain.o : src/exec/sendermain.c
+	gcc -I include $< -c -o $@
+build/testmain.o : src/exec/testmain.c
+	gcc -I include $< -c -o $@
+
 
 clean : 
 	rm -rf bin
+	rm -rf build
+	
