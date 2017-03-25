@@ -49,7 +49,10 @@ void filereadertest(){
     free( buf );
 }
 
+void splitfile(){
+    split("/home/labvcr2/cassiano/networks/files/input.txt", "8");
+}
+
 void test(){
-    filereadertest();
-    protocolutilstest();
+    splitfile();
 }

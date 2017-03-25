@@ -16,12 +16,15 @@ void sendfile(){
 
     len = sizeof(Header);
 
-    printf ("mensagem de tamanho: %d\n", len);
-
     bytes_sent = send(sockfd, h, len, 0);
 
+    free(h);
+
     if(bytes_sent < 0){
-        fprintf(stderr, "send error: %s\n", strerror(status));
+        fprintf(stderr, "send error: %s\n", strerror(sockfd));
         exit(1);
     }
+
+    
+
 }

@@ -65,3 +65,56 @@ long slurp(char const* path, char **buf, int add_nul)
     /* Return the file size */
     return (long)fsz;
 }
+
+/*
+    runs a shell command in the form 
+    split -b <slice_bytes> <filename> <filename>.part.
+*/
+
+void split(char const* filename, char const* slice_bytes){
+    char command[1024];
+    char converted_long[24];
+    char destination_files[256];
+
+    strcpy(destination_files, filename);
+
+    strcat(destination_files, ".part.");
+
+    strcpy(command, "split -b ");
+
+    strcat(command, slice_bytes);
+
+    strcat(command, " ");   
+
+    strcat(command, filename);
+
+    strcat(command, " ");
+
+    strcat(command, destination_files);
+   
+    system(command);
+
+}
+
+
+
+void compressandsplit(char const* foldername, char const* slice_bytes){
+
+}
+
+void compress(char const* foldername){
+    char destination[256];
+
+    
+}
+
+void strfromlong(long ulong_value, char * str){
+    const int n = snprintf(NULL, 0, "%lu", ulong_value);
+    assert(n > 0);
+    char buf[n+1];
+    int c = snprintf(buf, n+1, "%lu", ulong_value);
+    assert(buf[n] == '\0');
+    assert(c == n);
+    
+    strcpy(str, buf); 
+}
