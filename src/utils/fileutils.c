@@ -99,7 +99,7 @@ void getfilenamenoextension(const char * compressed_file, char * basename_buf){
     split -b <slice_bytes> <filename> <filename_parent_dir>/<filename>_parts/segment.
 */
 
-void split(char const* filename, char const* slice_bytes, char * splitted_file_regex){
+void split(char const* filename, char const* slice_bytes, char * parts_folder){
     char split_command[1024];
     char mkdir_command[1024];
     
@@ -142,17 +142,17 @@ void split(char const* filename, char const* slice_bytes, char * splitted_file_r
    
     system(split_command);
 
-    strcpy(splitted_file_regex, destination_files);
-    strcat(splitted_file_regex, "*");
+    strcpy(parts_folder, destination_files);
+    //strcat(splitted_file_regex, "*");
 
 }
 
 
-void compressandsplit(char const * folder_path, char * regex){
+void compressandsplit(char const * folder_path, char * parts_folder){
     char compressed_file[256];
 
     compress(folder_path, compressed_file);
-    split(compressed_file, "256000", regex);
+    split(compressed_file, "256000", parts_folder);
 }
 
 /*

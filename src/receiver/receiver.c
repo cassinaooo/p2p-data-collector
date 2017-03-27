@@ -21,7 +21,7 @@ void recvfile(){
     Header *h = malloc(sizeof(Header));
     int msg_size = sizeof(Header);
 
-    printf("aguardando mensagem de tamanho: %d\n", msg_size);
+    printf("AWAITING CONNECTIONS ON PORT %s\n", PORT);
 
     status = recv(new_fd, h, msg_size, 0);
 
