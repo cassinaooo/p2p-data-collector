@@ -10,8 +10,8 @@ typedef struct {
 } Header;
 
 typedef struct {
-    int datalen;
-    int sliceno;
+    int slicesize;
+    char slicename[255];
     char *data;
 } Slice;
 

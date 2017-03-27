@@ -1,4 +1,5 @@
 #include "fileutils.h"
+#include <time.h> 
 
 /*
  * 'slurp' reads the file identified by 'path' into a character buffer
@@ -66,55 +67,158 @@ long slurp(char const* path, char **buf, int add_nul)
     return (long)fsz;
 }
 
+
+
+void getparentdir(const char * compressed_file, char * parentdir){
+
+    //char *dummy  = strdup( compressed_file );
+    
+    char *dname = dirname(strdup( compressed_file ));
+
+    strcpy(parentdir, dname);
+}
+
+void getfilenamenoextension(const char * compressed_file, char * basename_buf){
+
+    //char *dummy  = strdup( compressed_file );
+    
+    char *extracted_base = basename(strdup( compressed_file ));
+    
+    int i;
+
+    for(i = 0; extracted_base[i] != '\0' && extracted_base[i] != '.'; i++);
+
+    extracted_base[i] = '\0';
+
+    strcpy(basename_buf, extracted_base);
+}
+
+
 /*
     runs a shell command in the form 
-    split -b <slice_bytes> <filename> <filename>.part.
+    split -b <slice_bytes> <filename> <filename_parent_dir>/<filename>_parts/segment.
 */
 
-void split(char const* filename, char const* slice_bytes){
-    char command[1024];
-    char converted_long[24];
+void split(char const* filename, char const* slice_bytes, char * splitted_file_regex){
+    char split_command[1024];
+    char mkdir_command[1024];
+    
     char destination_files[256];
+    char parent_dir[256];
+    char basename[256];
+    
+    getfilenamenoextension(filename, basename);
+    getparentdir(filename, parent_dir);
 
-    strcpy(destination_files, filename);
+    sprintf(destination_files, "%s/%s_parts/", parent_dir, basename);
 
-    strcat(destination_files, ".part.");
+    // creates parts_directory
 
-    strcpy(command, "split -b ");
+    strcpy(mkdir_command, "mkdir -p ");
+    
+    strcat(mkdir_command, destination_files);
 
-    strcat(command, slice_bytes);
+    printf("%s\n", mkdir_command);
 
-    strcat(command, " ");   
+    system(mkdir_command);
 
-    strcat(command, filename);
+    // runs split command
 
-    strcat(command, " ");
+    strcpy(split_command, "split -b ");
 
-    strcat(command, destination_files);
+    strcat(split_command, slice_bytes);
+
+    strcat(split_command, " ");   
+
+    strcat(split_command, filename);
+
+    strcat(split_command, " ");
+
+    strcat(split_command, destination_files);
+
+    strcat(split_command, "segment.");
+    
+    printf("%s\n", split_command);
    
-    system(command);
+    system(split_command);
+
+    strcpy(splitted_file_regex, destination_files);
+    strcat(splitted_file_regex, "*");
 
 }
 
 
+void compressandsplit(char const * folder_path, char * regex){
+    char compressed_file[256];
 
-void compressandsplit(char const* foldername, char const* slice_bytes){
-
+    compress(folder_path, compressed_file);
+    split(compressed_file, "256000", regex);
 }
 
-void compress(char const* foldername){
+/*
+    runs a shell command in the form 
+    tar cvf <compressed_filename>_<unix_timestamp>.tar.gz <foldername>
+*/
+
+void compress(char const* foldername, char * compressed_filename){
     char destination[256];
+    char tar_command[1024];
 
+    char timestamp[15];
+
+    sprintf(timestamp, "%lu", (unsigned long) time(NULL));
     
+    strcpy(destination, foldername);
+
+    strcat(destination,"_");
+    
+    strcat(destination,timestamp);
+
+    strcat(destination, ".tar.gz");
+
+    strcpy(tar_command, "tar -cvf ");
+
+    strcat(tar_command, destination);
+
+    strcat(tar_command, " ");
+    
+    strcat(tar_command, foldername);
+
+    printf("%s\n", tar_command);
+    
+    system(tar_command);
+
+    strcpy(compressed_filename, destination);
 }
 
-void strfromlong(long ulong_value, char * str){
-    const int n = snprintf(NULL, 0, "%lu", ulong_value);
-    assert(n > 0);
-    char buf[n+1];
-    int c = snprintf(buf, n+1, "%lu", ulong_value);
-    assert(buf[n] == '\0');
-    assert(c == n);
-    
-    strcpy(str, buf); 
+void listfilesbyregex(char const *regex, char **files){
+
+    FILE *fp;
+    char path[1035];
+
+    /* Open the command for reading. */
+
+    char ls_command[512];
+
+    strcpy(ls_command, "/bin/ls ");
+
+    strcat(ls_command, regex);    
+
+    fp = popen(ls_command, "r");
+
+    if (fp == NULL) {
+        printf("Failed to run command\n" );
+        exit(1);
+    }
+
+    int line_idx = 0;
+    /* Read the output a line at a time - output it. */
+    while (fgets(path, sizeof(path)-1, fp) != NULL) {
+        path[strlen(path) - 1] = '\0';
+        strcpy(files[line_idx++], path);
+    }
+
+    files[line_idx] = '\0';
+
+    pclose(fp);
 }

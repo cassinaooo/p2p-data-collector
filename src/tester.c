@@ -13,7 +13,7 @@ void testslicecreation(Header *h){
     Slice * slices[slsize];
     
     for(int i = 0; i < slsize; i++){
-        slices[i] = newslice(h, i, "THIS IS SOME DATA!");
+        slices[i] = newslice(slmaxlen, i, "slice.file","THIS IS SOME DATA!");
     }
 
     for(int i = 0; i < slsize; i++){
@@ -50,8 +50,24 @@ void filereadertest(){
 }
 
 void splitfile(){
-    split("/home/labvcr2/cassiano/networks/files/input.txt", "8");
+    char parts_regex[256];
+
+    compressandsplit("/home/labvcr2/cassiano/networks/files/to_send", parts_regex);
+
+    char **files = malloc(1024 * sizeof(char *));
+
+    for(int i = 0; i < 1024; i++){
+        files[i] = malloc(256 * sizeof(char));
+    }
+
+    listfilesbyregex(parts_regex, files);
+
+    for(int i = 0; files[i] != '\0'; i++){
+        printf("%s\n", files[i]);
+    }
 }
+
+
 
 void test(){
     splitfile();

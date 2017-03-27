@@ -10,7 +10,7 @@
 Header *newheader();
 void printheader(const Header * h);
 
-Slice *newslice(Header * header, int slice_no, const char * data);
+Slice *newslice(int datasize, int sliceno, const char * slicename , const char * data);
 void printslice(const Slice * s);
 
 #endif
