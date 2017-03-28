@@ -12,7 +12,7 @@ tests : build/sendersockets.o build/sender.o build/receiver.o build/receiversock
 sender : build/sendersockets.o build/sender.o build/fileutils.o build/protocolutils.o build/sendermain.o
 	gcc -I include $^ -o bin/sender
 
-receiver : build/receiver.o build/receiversockets.o build/protocolutils.o build/receivermain.o
+receiver : build/receiver.o build/receiversockets.o build/protocolutils.o build/receivermain.o build/fileutils.o
 	gcc -I include $^ -o bin/receiver
 
 build/sendersockets.o : src/sender/sendersockets.c
@@ -41,4 +41,6 @@ build/testmain.o : src/exec/testmain.c
 clean : 
 	rm -rf bin
 	rm -rf build
+	rm -rf files/*.tar.gz
+	rm -rf files/*parts
 	

@@ -78,9 +78,32 @@ void getparentdir(const char * compressed_file, char * parentdir){
     strcpy(parentdir, dname);
 }
 
-void getfilenamenoextension(const char * compressed_file, char * basename_buf){
+void makefolder(const char *hostname, const char *basepath, char *resultingfolder){
+    char mkdir_command[512];
+    char destination_folder[256];
 
-    //char *dummy  = strdup( compressed_file );
+    strcpy(mkdir_command, "mkdir -p ");
+
+    strcpy(destination_folder, basepath);    
+    strcat(destination_folder, "/");
+    strcat(destination_folder, hostname);
+    strcat(destination_folder, "/");
+
+    char timestamp[15];
+
+    sprintf(timestamp, "%lu", (unsigned long) time(NULL));
+    strcat(destination_folder, timestamp);  
+
+    strcat(mkdir_command, destination_folder);  
+
+    printf("%s\n", mkdir_command);
+
+    strcpy(resultingfolder, destination_folder);
+
+    //system(mkdir_command);
+}
+
+void getfilenamenoextension(const char * compressed_file, char * basename_buf){
     
     char *extracted_base = basename(strdup( compressed_file ));
     
@@ -143,16 +166,17 @@ void split(char const* filename, char const* slice_bytes, char * parts_folder){
     system(split_command);
 
     strcpy(parts_folder, destination_files);
-    //strcat(splitted_file_regex, "*");
-
 }
 
 
-void compressandsplit(char const * folder_path, char * parts_folder){
+void compressandsplit(char const * folder_path, char * parts_folder, int sizeofslices){
     char compressed_file[256];
+    char sizeofslices_str[30];
+
+    sprintf(sizeofslices_str, "%d", sizeofslices);
 
     compress(folder_path, compressed_file);
-    split(compressed_file, "256000", parts_folder);
+    split(compressed_file, sizeofslices_str, parts_folder);
 }
 
 /*
@@ -191,7 +215,7 @@ void compress(char const* foldername, char * compressed_filename){
     strcpy(compressed_filename, destination);
 }
 
-void listfilesbyregex(char const *regex, char **files){
+void listfilesbyfolder(char const *parts_folder, char **files){
 
     FILE *fp;
     char path[1035];
@@ -202,7 +226,11 @@ void listfilesbyregex(char const *regex, char **files){
 
     strcpy(ls_command, "/bin/ls ");
 
-    strcat(ls_command, regex);    
+    strcat(ls_command, parts_folder);
+
+    strcat(ls_command, "*");
+
+    printf("%s\n", ls_command);    
 
     fp = popen(ls_command, "r");
 
@@ -221,4 +249,13 @@ void listfilesbyregex(char const *regex, char **files){
     files[line_idx] = '\0';
 
     pclose(fp);
+}
+
+unsigned int checksum(void *buffer, size_t len, unsigned int seed){
+    unsigned char *buf = (unsigned char *)buffer;
+    size_t i;
+
+    for (i = 0; i < len; ++i)
+        seed += (unsigned int)(*buf++);
+    return seed;
 }

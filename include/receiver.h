@@ -3,6 +3,7 @@
 
 #include "receiversockets.h"
 #include "protocolutils.h"
+#include "fileutils.h"
 
 void recvfile();
 

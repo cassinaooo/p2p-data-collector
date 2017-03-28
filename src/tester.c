@@ -1,31 +1,5 @@
 #include "tester.h"
 
-Header *testheadercreation(){
-    Header *h = newheader("192.168.1.1", "192.168.1.2", "file.txt", 10, 1024);
-    printheader(h);
-    return h;
-}
-
-void testslicecreation(Header *h){
-    int slsize = h->numberofslices;
-    int slmaxlen = h->slicemaxlen;
-
-    Slice * slices[slsize];
-    
-    for(int i = 0; i < slsize; i++){
-        slices[i] = newslice(slmaxlen, i, "slice.file","THIS IS SOME DATA!");
-    }
-
-    for(int i = 0; i < slsize; i++){
-        printslice(slices[i]);
-    }
-}
-
-void protocolutilstest(){
-    Header *h = testheadercreation();
-    testslicecreation(h);
-}
-
 /*
  * Demonstrates a call to 'slurp'.
  */
@@ -41,18 +15,22 @@ void filereadertest(){
         perror("File read failed");
     }
 
-    for(int i = 0; i < file_size; i++){
-        printf("%c", buf[i]);
-    }
-
     /* Remember to free() memory allocated by slurp() */
     free( buf );
 }
 
-void splitfile(){
-    char parts_regex[256];
+void testslicecreation(){
+    Slice *s = malloc(sizeof(Slice));
+    
+    newslice(s, 0, 10, "slicename", "1234");
 
-    compressandsplit("/home/labvcr2/cassiano/networks/files/to_send", parts_regex);
+    printslice(s);
+}
+
+void splitfile(){
+    char parts_folder[256];
+
+    compressandsplit("/home/labvcr2/cassiano/networks/files/to_send", parts_folder, 256000);
 
     char **files = malloc(1024 * sizeof(char *));
 
@@ -60,7 +38,7 @@ void splitfile(){
         files[i] = malloc(256 * sizeof(char));
     }
 
-    listfilesbyregex(parts_regex, files);
+    listfilesbyfolder(parts_folder, files);
 
     for(int i = 0; files[i] != '\0'; i++){
         printf("%s\n", files[i]);
@@ -68,5 +46,5 @@ void splitfile(){
 }
 
 void test(){
-    splitfile();
+    testslicecreation();
 }

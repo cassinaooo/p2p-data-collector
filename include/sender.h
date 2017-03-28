@@ -4,6 +4,8 @@
 #include <string.h>
 #include "sendersockets.h"
 #include "protocolutils.h"
+#include "fileutils.h"
+#include <unistd.h>
 
 void sendfile();
 

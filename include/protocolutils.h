@@ -7,10 +7,11 @@
 
 #include "protocoltypes.h"
 
-Header *newheader();
+Header *newheader(const char * clientname, const char * filename, const int numberofslices,const int slicemaxlen);
+
 void printheader(const Header * h);
 
-Slice *newslice(int datasize, int sliceno, const char * slicename , const char * data);
+void newslice(Slice *new, const int slicenumber, const int totalslices, const char * slicename , const char * data);
 void printslice(const Slice * s);
 
 #endif
