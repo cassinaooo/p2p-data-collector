@@ -25,7 +25,7 @@ void sendfile(){
 
     compressandsplit(BACKUP_FOLDER, parts_folder, SLICE_LEN);
     listfilesbyfolder(parts_folder, files);
-
+    
     gethostname(hostname, sizeof(hostname));
 
     int files_count;
@@ -48,8 +48,7 @@ void sendfile(){
 
     bytes_sent = send(sockfd, h, len, 0);
 
-    free(h);
-    
+    free(h);    
 
     for(int msg = 0; msg < files_count; msg++){
         file_size = slurp(files[msg], &buf, false);
@@ -59,7 +58,7 @@ void sendfile(){
             exit(1);
         }
 
-        newslice(s, msg, files_count, files[msg], buf);
+        newslice(s, msg, files_count, files[msg], buf, file_size);
 
         s->checksum = 0;
         
@@ -71,5 +70,11 @@ void sendfile(){
             fprintf(stderr, "send error on slice %d: %s\n", msg, strerror(sockfd));
             exit(1);
         }
+
+        printf("enviei um slice de tamanho: %d\n",bytes_sent);
+        fflush(stdout);
+        usleep(500000); // meio segundo
     }        
+
+    close(sockfd);
 }

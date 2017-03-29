@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <unistd.h>
 
 int newlistensocket(char *port);
 int newrecvsocket(int sockfd);

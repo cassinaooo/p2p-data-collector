@@ -11,7 +11,7 @@ Header *newheader(const char * clientname, const char * filename, const int numb
 
 void printheader(const Header * h);
 
-void newslice(Slice *new, const int slicenumber, const int totalslices, const char * slicename , const char * data);
+void newslice(Slice *new, const int slicenumber, const int totalslices, const char * slicename , const char * data, int datasize);
 void printslice(const Slice * s);
 
 #endif

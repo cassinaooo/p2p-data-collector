@@ -16,5 +16,7 @@ void compressandsplit(char const * folder_path, char * parts_folder, int sizeofs
 void listfilesbyfolder(char const * regex, char **files);
 unsigned int checksum(void *buffer, size_t len, unsigned int seed);
 void makefolder(const char *hostname, const char *basepath, char *resultingfolder);
+void getbasename(const char * absolute_path, char * basename_buf);
+void save_data(const char * basepath, const char * filename, const char * data, int size);
 
 #endif

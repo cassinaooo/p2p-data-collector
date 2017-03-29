@@ -39,7 +39,7 @@ int newlistensocket(char *port){
     status = bind(sockfd, res->ai_addr, res->ai_addrlen);
 
     if(status < 0){
-        fprintf(stderr, "bind error: %s\n", strerror(status));
+        fprintf(stderr, "bind error: %s\n", strerror(sockfd));
         exit(1);
     }
 

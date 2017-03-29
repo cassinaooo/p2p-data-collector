@@ -100,7 +100,7 @@ void makefolder(const char *hostname, const char *basepath, char *resultingfolde
 
     strcpy(resultingfolder, destination_folder);
 
-    //system(mkdir_command);
+    system(mkdir_command);
 }
 
 void getfilenamenoextension(const char * compressed_file, char * basename_buf){
@@ -116,6 +116,36 @@ void getfilenamenoextension(const char * compressed_file, char * basename_buf){
     strcpy(basename_buf, extracted_base);
 }
 
+void getbasename(const char * absolute_path, char * basename_buf){
+    
+    char *extracted_base = basename(strdup( absolute_path ));
+    
+    int i;
+
+    strcpy(basename_buf, extracted_base);
+}
+
+void save_data(const char * basepath, const char * filename, const char * data, int size){
+    char destination[256];
+
+    strcpy(destination, basepath);
+    strcat(destination, "/");
+    strcat(destination, filename);    
+    
+
+    FILE *f = fopen(destination, "w");
+
+    printf("saving to: %s\n", destination);
+
+    if (f == NULL){
+        printf("Error opening file!\n");
+        exit(1);
+    }
+
+    fwrite(data, size, 1, f);
+
+    fclose(f);
+}
 
 /*
     runs a shell command in the form 

@@ -22,7 +22,7 @@ void filereadertest(){
 void testslicecreation(){
     Slice *s = malloc(sizeof(Slice));
     
-    newslice(s, 0, 10, "slicename", "1234");
+    newslice(s, 0, 10, "slicename", "1234", 4);
 
     printslice(s);
 }

@@ -22,11 +22,13 @@ void printheader(const Header * h){
     printf("%s\n\n", "------ HEADER END -------");     
 }
 
-void newslice(Slice *new, const int slicenumber, const int totalslices, const char * slicename , const char * data){
+void newslice(Slice *new, const int slicenumber, const int totalslices, const char * slicename , const char * data, int datasize){
     
     new->slicenumber = slicenumber;
     
     new->totalslices = totalslices;
+
+    new->datasize = datasize;
 
     strcpy(new->slicename, slicename);
 
@@ -37,8 +39,10 @@ void printslice(const Slice * s){
     
     printf("%s\n", "------ SLICE BEGIN -------");
     
-    printf("slice: %d/%d\n", s->slicenumber, s->totalslices); 
+    printf("slice: %d/%d\n", s->slicenumber+1, s->totalslices); 
     printf("slicename: %s\n", s->slicename);
+    printf("datasize: %d\n", s->datasize);
+    
     
     printf("%s\n\n", "------ SLICE END -------");     
 }
