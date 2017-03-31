@@ -2,7 +2,7 @@
 
 #define PORT "35000"  // the port users will be connecting to
 #define BACKLOG 10     // how many pending connections queue will hold
-#define ROOT_DIR "/home/labvcr2/cassiano/networks/files/received"
+#define ROOT_DIR "/home/cassiano/redes/files/received"
 
 void recvfile(){
     int status;

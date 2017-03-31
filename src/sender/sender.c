@@ -3,7 +3,7 @@
 #define PORT "35000" // the port to connect to
 #define HOST "localhost" 
 // no trailing slashes here, pls
-#define BACKUP_FOLDER "/home/labvcr2/cassiano/networks/files/to_send"
+#define BACKUP_FOLDER "/home/cassiano/redes/files/to_send"
 #define SLICE_LEN 256000
 
 void sendfile(){
