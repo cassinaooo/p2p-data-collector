@@ -55,11 +55,16 @@ void sendfiles(){
     off_t offset = 0;
     sent_bytes = 0;
 
+    int i = 0;
+
     /* Sending file data */
     while (((sent_bytes = sendfile(sockfd, file_descriptor, &offset, BUFSIZ)) > 0) && (remain_data > 0)){
-        fprintf(stdout, "1. Server sent %d bytes from file's data, offset is now : %ld and remaining data = %d\n", sent_bytes, (long int)offset, remain_data);
+        //fprintf(stdout, "1. Server sent %d bytes from file's data, offset is now : %ld and remaining data = %d\n", sent_bytes, (long int)offset, remain_data);
         remain_data -= sent_bytes;
-        fprintf(stdout, "2. Server sent %d bytes from file's data, offset is now : %ld and remaining data = %d\n", sent_bytes, (long int)offset, remain_data);
+        
+        if(++i % 99 == 0)
+            fprintf(stdout, "Server sent %d bytes from file's data, offset is now : %ld and remaining data = %d\n", sent_bytes, (long int)offset, remain_data);
+        
         fflush(stdout);              
     }
 

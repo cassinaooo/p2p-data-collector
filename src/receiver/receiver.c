@@ -8,6 +8,9 @@ void recvfile(){
     int status;
     int sockfd;
 
+    printf("AWAITING CONNECTIONS ON PORT %s\n", PORT);
+    fflush(stdout);
+
     sockfd = newlistensocket(PORT);
     
     status = listen(sockfd, BACKLOG);
@@ -20,8 +23,6 @@ void recvfile(){
     int new_fd = newrecvsocket(sockfd);
 
     Header *header = malloc(sizeof(Header));
-
-    printf("AWAITING CONNECTIONS ON PORT %s\n", PORT);
 
     int bytes_read = recv(new_fd, header, sizeof(Header), 0);
 
@@ -51,11 +52,13 @@ void recvfile(){
 
     int remain_data = header->filesize;
     char buffer[BUFSIZ];
+    int i = 0;
 
     while (((bytes_read = recv(new_fd, buffer, BUFSIZ, 0)) > 0) && (remain_data > 0)){
             fwrite(buffer, sizeof(char), bytes_read, received_fd);
             remain_data -= bytes_read;
-            fprintf(stdout, "Receive %d bytes and we hope :- %d bytes\n", bytes_read, remain_data);
+
+            if(++i % 90 == 0)  fprintf(stdout, "Receive %d bytes and we hope :- %d bytes\n", bytes_read, remain_data);
     }
     
     close(sockfd);

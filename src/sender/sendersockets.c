@@ -35,8 +35,7 @@ int newsendsocket(char *port, char *host){
         exit(1);        
     }
 
-    // connect!
-    
+    // connect!   
 
     if((status = connect(sockfd, res->ai_addr, res->ai_addrlen)) < 0){
         fprintf(stderr, "connect error: %s\n", strerror(sockfd));

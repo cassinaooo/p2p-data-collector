@@ -42,6 +42,5 @@ clean :
 	rm -rf bin
 	rm -rf build
 	rm -rf files/*.tar.gz
-	rm -rf files/*parts
 	rm -rf files/received/*
 	
