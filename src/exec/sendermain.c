@@ -1,6 +1,6 @@
 #include "sender.h"
 
 int main(){
-    sendfile();
+    sendfiles();
     return 0;
 }

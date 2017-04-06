@@ -23,9 +23,9 @@ void recvfile(){
 
     printf("AWAITING CONNECTIONS ON PORT %s\n", PORT);
 
-    status = recv(new_fd, header, sizeof(Header), 0);
+    int bytes_read = recv(new_fd, header, sizeof(Header), 0);
 
-    if(status < 0){
+    if(bytes_read < 0){
         fprintf(stderr, "header recv error: %s\n", strerror(new_fd));
     }
 
@@ -33,19 +33,33 @@ void recvfile(){
 
     printheader(header);
 
-    char destination[256];
+    char destination_folder[256], destination_file[256];
 
-    makefolder(header->c_name, ROOT_DIR, destination);
+    makefolder(header->c_name, ROOT_DIR, destination_folder);
 
-    printf("folder to save: %s\n", destination);
+    printf("folder to save: %s\n", destination_folder);
     fflush(stdout);
 
+    getfinalfilename(destination_folder, header->filename, destination_file);
     
-    save_data(destination, header->filename, "---", 0);
-    
+    FILE *received_fd = fopen(destination_file, "w");
 
+    if (received_fd == NULL){
+        fprintf(stderr, "Failed to open file foo --> %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+
+    int remain_data = header->filesize;
+    char buffer[BUFSIZ];
+
+    while (((bytes_read = recv(new_fd, buffer, BUFSIZ, 0)) > 0) && (remain_data > 0)){
+            fwrite(buffer, sizeof(char), bytes_read, received_fd);
+            remain_data -= bytes_read;
+            fprintf(stdout, "Receive %d bytes and we hope :- %d bytes\n", bytes_read, remain_data);
+    }
+    
     close(sockfd);
-    close(new_fd);    
+    close(new_fd);
 
     if(status == 0){
         printf("%s\n", "connection closed");

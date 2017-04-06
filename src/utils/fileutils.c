@@ -125,26 +125,16 @@ void getbasename(const char * absolute_path, char * basename_buf){
     strcpy(basename_buf, extracted_base);
 }
 
-void save_data(const char * basepath, const char * filename, const char * data, int size){
+void getfinalfilename(const char * basepath, const char * filename, char * resulting_filename){
     char destination[256];
 
     strcpy(destination, basepath);
     strcat(destination, "/");
     strcat(destination, filename);    
-    
 
-    FILE *f = fopen(destination, "w");
+    printf("will save to: %s\n", destination);
 
-    printf("saving to: %s\n", destination);
-
-    if (f == NULL){
-        printf("Error opening file!\n");
-        exit(1);
-    }
-
-    fwrite(data, size, 1, f);
-
-    fclose(f);
+    strcpy(resulting_filename, destination);
 }
 
 /*
@@ -288,4 +278,23 @@ unsigned int checksum(void *buffer, size_t len, unsigned int seed){
     for (i = 0; i < len; ++i)
         seed += (unsigned int)(*buf++);
     return seed;
+}
+
+int getfd(const char *path, int *fd){
+    struct stat file_stat;
+
+    *fd = open(path, O_RDONLY);
+
+    if (fd == NULL){
+        fprintf(stderr, "Error opening file --> %s", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+
+    /* Get file stats */
+    if (fstat(*fd, &file_stat) < 0){
+        fprintf(stderr, "Error fstat --> %s", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+
+    return file_stat.st_size;
 }

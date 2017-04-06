@@ -6,7 +6,7 @@
 #define BACKUP_FOLDER "/home/cassiano/redes/files/to_send"
 #define SLICE_LEN 256000
 
-void sendfile(){
+void sendfiles(){
     int status;
 
     printf("CONNECTING TO HOST: %s ON PORT %s\n", HOST, PORT);
@@ -20,47 +20,48 @@ void sendfile(){
     char hostname[50];    
     gethostname(hostname, sizeof(hostname));
 
-    char *buf;
-    int file_size;
+    int file_descriptor, remain_data;
         
-    file_size = slurp(file_to_send, &buf, false);
+    printf("reading file: %s\n", file_to_send);
 
-    Header *h = newheader(hostname, BACKUP_FOLDER, file_size, 0);
+    remain_data = getfd(file_to_send, &file_descriptor);
+
+    if( remain_data < 0L ) {
+        perror("File read failed\n");
+        exit(1);
+    }        
+
+    printf("file was %d bytes long\n", remain_data);
+    fflush(stdout);
+
+    char file_basename[256];
+
+    getbasename(file_to_send, file_basename);
+
+    Header *h = newheader(hostname, file_basename, remain_data, 0);
     
     printf("ENVIANDO HEADER:\n");
     printheader(h);
     fflush(stdout);    
 
-    int bytes_sent;
-    bytes_sent = send(sockfd, h, sizeof(Header), 0);
-    free(h);    
+    int sent_bytes = send(sockfd, h, sizeof(Header), 0);
+    free(h);
 
-    if(bytes_sent < 0){
+    if(sent_bytes < 0){
         fprintf(stderr, "send error on header: %s\n", strerror(sockfd));
         exit(1);
-    }  
-    
-    printf("reading file: %s\n", file_to_send);
-    fflush(stdout); 
+    } 
 
-    printf("file was %d bytes long\n", file_size);
-    fflush(stdout);
-    
-    if( file_size < 0L ) {
-        perror("File read failed\n");
-        exit(1);
+    off_t offset = 0;
+    sent_bytes = 0;
+
+    /* Sending file data */
+    while (((sent_bytes = sendfile(sockfd, file_descriptor, &offset, BUFSIZ)) > 0) && (remain_data > 0)){
+        fprintf(stdout, "1. Server sent %d bytes from file's data, offset is now : %ld and remaining data = %d\n", sent_bytes, (long int)offset, remain_data);
+        remain_data -= sent_bytes;
+        fprintf(stdout, "2. Server sent %d bytes from file's data, offset is now : %ld and remaining data = %d\n", sent_bytes, (long int)offset, remain_data);
+        fflush(stdout);              
     }
-
-    printf("sending file...\n");
-    fflush(stdout);
-
-    bytes_sent = send(sockfd, buf, file_size, 0);
-    free(buf);    
-    
-    if(bytes_sent < 0){
-        fprintf(stderr, "send error on data: %s\n", strerror(sockfd));
-        exit(1);
-    }   
 
     close(sockfd);
 }

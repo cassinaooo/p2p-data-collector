@@ -7,6 +7,6 @@
 #include "fileutils.h"
 #include <unistd.h>
 
-void sendfile();
+void sendfiles();
 
 #endif
