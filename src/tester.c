@@ -18,15 +18,6 @@ void filereadertest(){
     /* Remember to free() memory allocated by slurp() */
     free( buf );
 }
-
-void testslicecreation(){
-    Slice *s = malloc(sizeof(Slice));
-    
-    newslice(s, 0, 10, "slicename", "1234", 4);
-
-    printslice(s);
-}
-
 void splitfile(){
     char parts_folder[256];
 
@@ -46,5 +37,5 @@ void splitfile(){
 }
 
 void test(){
-    testslicecreation();
+    //testslicecreation();
 }

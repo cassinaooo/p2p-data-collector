@@ -40,24 +40,9 @@ void recvfile(){
     printf("folder to save: %s\n", destination);
     fflush(stdout);
 
-    Slice *s = malloc(sizeof(Slice));
-
-    int bytesread;
-    char filename[256];
-
-    for(int msg = 0; msg < header->numberofslices; msg++){
-        bytesread = recv(new_fd, s, sizeof(Slice), 0);
-
-        if(bytesread < 0){
-            fprintf(stderr, "slice %d recv error: %s\n", msg, strerror(new_fd));
-        }
-        
-        printf("slice n: %d, size: %d\n", msg+1, s->datasize);
-        printslice(s);
-        fflush(stdout);
-        getbasename(s->slicename, filename);
-        save_data(destination, filename, s->data, s->datasize);
-    }
+    
+    save_data(destination, header->filename, "---", 0);
+    
 
     close(sockfd);
     close(new_fd);    
