@@ -26,3 +26,12 @@ O sender aguarda um diretório como entrada, no qual todos os arquivos a serem e
 Esse arquivo será removido da pasta, assim como os arquivos que o geraram, ao sucesso da transação.
 
 O receiver armazena os dados recebidos no diretório especificado como paramêtro, sendo cada transação sendo armazenada neste diretório como ```<hostname>/<timestamp>/<arquivo>```
+
+### Requisitos 
+
+A aplicação deve garantir:
+
+1. A transferência arquivos arbitrários entre os dispositivos, sem restrição de tamanho ou conteúdo.
+2. A integridade e confiabilidade dos dados recebidos pelo receiver.
+3. Que os dispositivos finalizem todas as transações em um estado seguro, sendo bem-sucedidas ou não.
+4. Que a aplicação esteja pronta para uso assim que os dispositivos computacionais sejam inicializados.

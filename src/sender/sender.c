@@ -68,5 +68,6 @@ void sendfiles(){
         fflush(stdout);              
     }
 
+    close(file_descriptor);
     close(sockfd);
 }
