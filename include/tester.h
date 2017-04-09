@@ -9,9 +9,6 @@
 #include "fileutils.h"
 #include "protocolutils.h"
 
-void protocolutilstest();
-void filereadertest();
-void splitfile();
 void test();
 
 #endif
