@@ -1,3 +1,4 @@
+#include <protocoltypes.h>
 #include "receiver.h"
 
 #define PORT "35000"  // the port users will be connecting to
@@ -5,41 +6,39 @@
 #define ROOT_DIR "/home/cassiano/redes/files/received"
 
 void recvfile(){
-    int status;
-    int sockfd;
+    int status, sockfd, new_fd;
+    char destination_folder[256], destination_file[256], buffer[BUFSIZ];
+    ssize_t bytes_read;
+    __off_t remain_data;
 
-    printf("AWAITING CONNECTIONS ON PORT %s\n", PORT);
-    fflush(stdout);
+    Header *header;
+
+    debug("AWAITING CONNECTIONS ON PORT %s\n", PORT);
 
     sockfd = newlistensocket(PORT);
-    
     status = listen(sockfd, BACKLOG);
 
     if(status < 0){
-        fprintf(stderr, "listen error: %s\n", strerror(sockfd));
+        error("listen error: %s\n", strerror(sockfd));
     }
 
     // socket to a new connection, blocks until a connection to PORT is made
-    int new_fd = newrecvsocket(sockfd);
+    new_fd  = newrecvsocket(sockfd);
 
-    Header *header = malloc(sizeof(Header));
+    header = malloc(sizeof(Header));
 
-    int bytes_read = recv(new_fd, header, sizeof(Header), 0);
+    bytes_read = recv(new_fd, header, sizeof(Header), 0);
 
     if(bytes_read < 0){
-        fprintf(stderr, "header recv error: %s\n", strerror(new_fd));
+        error("header recv error: %s\n", strerror(new_fd));
     }
 
-    printf ("HEADER RECEBIDO\n");
-
+    debug ("HEADER RECEBIDO\n");
     printheader(header);
 
-    char destination_folder[256], destination_file[256];
+    makefolder(header->client_name, ROOT_DIR, destination_folder);
 
-    makefolder(header->c_name, ROOT_DIR, destination_folder);
-
-    printf("folder to save: %s\n", destination_folder);
-    fflush(stdout);
+    debug("folder to save: %s\n", destination_folder);
 
     getfinalfilename(destination_folder, header->filename, destination_file);
     
@@ -50,22 +49,26 @@ void recvfile(){
         exit(EXIT_FAILURE);
     }
 
-    int remain_data = header->filesize;
-    char buffer[BUFSIZ];
+    remain_data = header->filesize;
+
     int i = 0;
-
     while (((bytes_read = recv(new_fd, buffer, BUFSIZ, 0)) > 0) && (remain_data > 0)){
-            fwrite(buffer, sizeof(char), bytes_read, received_fd);
-            remain_data -= bytes_read;
 
-            if(++i % 90 == 0)  fprintf(stdout, "Receive %d bytes and we hope :- %d bytes\n", bytes_read, remain_data);
+        fwrite(buffer, sizeof(char), bytes_read, received_fd);
+        remain_data -= bytes_read;
+
+        if(++i % 100 == 0){
+            debug("remaining data: %d bytes\n", remain_data);
+        }
+    }
+
+    // if we dont close the file, the last fwrite isnt done
+    fclose(received_fd);
+
+    if(cksum(destination_file) == header->checksum){
+        debug("Checksums match, ending connection.\n");
     }
     
     close(sockfd);
     close(new_fd);
-
-    if(status == 0){
-        printf("%s\n", "connection closed");
-        exit(0);
-    }
 }

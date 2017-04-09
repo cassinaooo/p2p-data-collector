@@ -11,16 +11,13 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <fcntl.h>
+#include "protocolutils.h"
 
-long slurp(char const* path, char **buf, int add_nul);
-void split(char const* filename, char const* slice_bytes, char * splitted_file_regex);
+unsigned long slurp(char const* path, unsigned char **buf, int add_nul);
 void compress(char const* foldername, char * compressed_filename);
-void compressandsplit(char const * folder_path, char * parts_folder, int sizeofslices);
-void listfilesbyfolder(char const * regex, char **files);
-unsigned int checksum(void *buffer, size_t len, unsigned int seed);
 void makefolder(const char *hostname, const char *basepath, char *resultingfolder);
 void getbasename(const char * absolute_path, char * basename_buf);
 void getfinalfilename(const char * basepath, const char * filename, char * resulting_filename);
-int getfd();
+__off_t getfd(const char *path, int *fd);
 
 #endif

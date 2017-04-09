@@ -12,8 +12,7 @@
  * the caller.
  */
 
-long slurp(char const* path, char **buf, int add_nul)
-{
+unsigned long slurp(char const* path, unsigned char **buf, int add_nul){
     FILE  *fp;
     size_t fsz;
     long   off_end;
@@ -22,25 +21,25 @@ long slurp(char const* path, char **buf, int add_nul)
     /* Open the file */
     fp = fopen(path, "rb");
     if( NULL == fp ) {
-        return -1L;
+        return 0;
     }
 
     /* Seek to the end of the file */
     rc = fseek(fp, 0L, SEEK_END);
     if( 0 != rc ) {
-        return -1L;
+        return 0;
     }
 
     /* Byte offset to the end of the file (size) */
     if( 0 > (off_end = ftell(fp)) ) {
-        return -1L;
+        return 0;
     }
     fsz = (size_t)off_end;
 
     /* Allocate a buffer to hold the whole file */
     *buf = malloc( fsz+(int)add_nul );
     if( NULL == *buf ) {
-        return -1L;
+        return 0;
     }
 
     /* Rewind file pointer to start of file */
@@ -49,13 +48,13 @@ long slurp(char const* path, char **buf, int add_nul)
     /* Slurp file into buffer */
     if( fsz != fread(*buf, 1, fsz, fp) ) {
         free(*buf);
-        return -1L;
+        return 0;
     }
 
     /* Close the file */
     if( EOF == fclose(fp) ) {
         free(*buf);
-        return -1L;
+        return 0;
     }
 
     if( add_nul ) {
@@ -65,17 +64,6 @@ long slurp(char const* path, char **buf, int add_nul)
 
     /* Return the file size */
     return (long)fsz;
-}
-
-
-
-void getparentdir(const char * compressed_file, char * parentdir){
-
-    //char *dummy  = strdup( compressed_file );
-    
-    char *dname = dirname(strdup( compressed_file ));
-
-    strcpy(parentdir, dname);
 }
 
 void makefolder(const char *hostname, const char *basepath, char *resultingfolder){
@@ -96,31 +84,15 @@ void makefolder(const char *hostname, const char *basepath, char *resultingfolde
 
     strcat(mkdir_command, destination_folder);  
 
-    printf("%s\n", mkdir_command);
+    debug("%s\n", mkdir_command);
 
     strcpy(resultingfolder, destination_folder);
 
     system(mkdir_command);
 }
 
-void getfilenamenoextension(const char * compressed_file, char * basename_buf){
-    
-    char *extracted_base = basename(strdup( compressed_file ));
-    
-    int i;
-
-    for(i = 0; extracted_base[i] != '\0' && extracted_base[i] != '.'; i++);
-
-    extracted_base[i] = '\0';
-
-    strcpy(basename_buf, extracted_base);
-}
-
 void getbasename(const char * absolute_path, char * basename_buf){
-    
     char *extracted_base = basename(strdup( absolute_path ));
-    
-    int i;
 
     strcpy(basename_buf, extracted_base);
 }
@@ -132,71 +104,9 @@ void getfinalfilename(const char * basepath, const char * filename, char * resul
     strcat(destination, "/");
     strcat(destination, filename);    
 
-    printf("will save to: %s\n", destination);
+    debug("Will save to: %s\n", destination);
 
     strcpy(resulting_filename, destination);
-}
-
-/*
-    runs a shell command in the form 
-    split -b <slice_bytes> <filename> <filename_parent_dir>/<filename>_parts/segment.
-*/
-
-void split(char const* filename, char const* slice_bytes, char * parts_folder){
-    char split_command[1024];
-    char mkdir_command[1024];
-    
-    char destination_files[256];
-    char parent_dir[256];
-    char basename[256];
-    
-    getfilenamenoextension(filename, basename);
-    getparentdir(filename, parent_dir);
-
-    sprintf(destination_files, "%s/%s_parts/", parent_dir, basename);
-
-    // creates parts_directory
-
-    strcpy(mkdir_command, "mkdir -p ");
-    
-    strcat(mkdir_command, destination_files);
-
-    printf("%s\n", mkdir_command);
-
-    system(mkdir_command);
-
-    // runs split command
-
-    strcpy(split_command, "split -b ");
-
-    strcat(split_command, slice_bytes);
-
-    strcat(split_command, " ");   
-
-    strcat(split_command, filename);
-
-    strcat(split_command, " ");
-
-    strcat(split_command, destination_files);
-
-    strcat(split_command, "segment.");
-    
-    printf("%s\n", split_command);
-   
-    system(split_command);
-
-    strcpy(parts_folder, destination_files);
-}
-
-
-void compressandsplit(char const * folder_path, char * parts_folder, int sizeofslices){
-    char compressed_file[256];
-    char sizeofslices_str[30];
-
-    sprintf(sizeofslices_str, "%d", sizeofslices);
-
-    compress(folder_path, compressed_file);
-    split(compressed_file, sizeofslices_str, parts_folder);
 }
 
 /*
@@ -207,7 +117,6 @@ void compressandsplit(char const * folder_path, char * parts_folder, int sizeofs
 void compress(char const* foldername, char * compressed_filename){
     char destination[256];
     char tar_command[1024];
-
     char timestamp[15];
 
     sprintf(timestamp, "%lu", (unsigned long) time(NULL));
@@ -220,7 +129,7 @@ void compress(char const* foldername, char * compressed_filename){
 
     strcat(destination, ".tar.gz");
 
-    strcpy(tar_command, "tar -cvf ");
+    strcpy(tar_command, "tar --absolute-names -cvf  ");
 
     strcat(tar_command, destination);
 
@@ -228,47 +137,11 @@ void compress(char const* foldername, char * compressed_filename){
     
     strcat(tar_command, foldername);
 
-    printf("%s\n", tar_command);
+    debug("%s\n", tar_command);
     
     system(tar_command);
 
     strcpy(compressed_filename, destination);
-}
-
-void listfilesbyfolder(char const *parts_folder, char **files){
-
-    FILE *fp;
-    char path[1035];
-
-    /* Open the command for reading. */
-
-    char ls_command[512];
-
-    strcpy(ls_command, "/bin/ls ");
-
-    strcat(ls_command, parts_folder);
-
-    strcat(ls_command, "*");
-
-    printf("%s\n", ls_command);    
-
-    fp = popen(ls_command, "r");
-
-    if (fp == NULL) {
-        printf("Failed to run command\n" );
-        exit(1);
-    }
-
-    int line_idx = 0;
-    /* Read the output a line at a time - output it. */
-    while (fgets(path, sizeof(path)-1, fp) != NULL) {
-        path[strlen(path) - 1] = '\0';
-        strcpy(files[line_idx++], path);
-    }
-
-    files[line_idx] = '\0';
-
-    pclose(fp);
 }
 
 unsigned int checksum(void *buffer, size_t len, unsigned int seed){
@@ -280,19 +153,19 @@ unsigned int checksum(void *buffer, size_t len, unsigned int seed){
     return seed;
 }
 
-int getfd(const char *path, int *fd){
+__off_t getfd(const char *path, int *fd){
     struct stat file_stat;
 
     *fd = open(path, O_RDONLY);
 
-    if (fd == NULL){
-        fprintf(stderr, "Error opening file --> %s", strerror(errno));
+    if (*fd == NULL){
+        error("Error opening file --> %s", strerror(errno));
         exit(EXIT_FAILURE);
     }
 
     /* Get file stats */
     if (fstat(*fd, &file_stat) < 0){
-        fprintf(stderr, "Error fstat --> %s", strerror(errno));
+        error("Error fstat --> %s", strerror(errno));
         exit(EXIT_FAILURE);
     }
 

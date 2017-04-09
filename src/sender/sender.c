@@ -4,68 +4,63 @@
 #define HOST "localhost" 
 // no trailing slashes here, pls
 #define BACKUP_FOLDER "/home/cassiano/redes/files/to_send"
-#define SLICE_LEN 256000
 
 void sendfiles(){
-    int status;
+    int sockfd, file_descriptor;
+    long file_size;
+    char file_to_send[256], hostname[50], file_basename[256];
 
-    printf("CONNECTING TO HOST: %s ON PORT %s\n", HOST, PORT);
-    fflush(stdout);    
+    __off_t remain_data, offset;
+    ssize_t sent_bytes;
+    Header *h;
 
-    int sockfd = newsendsocket(PORT, HOST);
+    debug("CONNECTING TO HOST: %s ON PORT %s\n", HOST, PORT);
 
-    char file_to_send[256];
+    sockfd = newsendsocket(PORT, HOST);
     compress(BACKUP_FOLDER, file_to_send);
-
-    char hostname[50];    
     gethostname(hostname, sizeof(hostname));
+    debug("reading file: %s\n", file_to_send);
 
-    int file_descriptor, remain_data;
-        
-    printf("reading file: %s\n", file_to_send);
+    file_size = getfd(file_to_send, &file_descriptor);
 
-    remain_data = getfd(file_to_send, &file_descriptor);
-
-    if( remain_data < 0L ) {
-        perror("File read failed\n");
+    if( file_size < 0L ) {
+        error("File read failed\n");
         exit(1);
     }        
 
-    printf("file was %d bytes long\n", remain_data);
-    fflush(stdout);
-
-    char file_basename[256];
+    debug("file was %ld bytes long\n", file_size);
 
     getbasename(file_to_send, file_basename);
 
-    Header *h = newheader(hostname, file_basename, remain_data, 0);
-    
-    printf("ENVIANDO HEADER:\n");
-    printheader(h);
-    fflush(stdout);    
+    // read file to calculate checksum
 
-    int sent_bytes = send(sockfd, h, sizeof(Header), 0);
+    h = newheader(hostname, file_basename, file_size, cksum(file_to_send));
+
+    debug("ENVIANDO HEADER:\n");
+    printheader(h);
+
+    sent_bytes = send(sockfd, h, sizeof(Header), 0);
+
     free(h);
 
     if(sent_bytes < 0){
-        fprintf(stderr, "send error on header: %s\n", strerror(sockfd));
+        error("send error on header: %s\n", strerror(sockfd));
         exit(1);
     } 
 
-    off_t offset = 0;
-    sent_bytes = 0;
+    offset = 0;
+
+    remain_data = file_size;
 
     int i = 0;
+    while (((sent_bytes = sendfile(sockfd, file_descriptor, &offset, BUFSIZ)) > 0)
+           && (remain_data > 0)){
 
-    /* Sending file data */
-    while (((sent_bytes = sendfile(sockfd, file_descriptor, &offset, BUFSIZ)) > 0) && (remain_data > 0)){
-        //fprintf(stdout, "1. Server sent %d bytes from file's data, offset is now : %ld and remaining data = %d\n", sent_bytes, (long int)offset, remain_data);
         remain_data -= sent_bytes;
         
-        if(++i % 99 == 0)
-            fprintf(stdout, "Server sent %d bytes from file's data, offset is now : %ld and remaining data = %d\n", sent_bytes, (long int)offset, remain_data);
-        
-        fflush(stdout);              
+        if(++i % 100 == 0) {
+            debug("remaining data: %d bytes\n", remain_data);
+        }
     }
 
     close(file_descriptor);

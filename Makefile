@@ -39,8 +39,8 @@ build/testmain.o : src/exec/testmain.c
 
 
 clean : 
-	rm -rf bin
-	rm -rf build
+#	rm -rf bin/*
+#	rm -rf build
 	rm -rf files/*.tar.gz
 	rm -rf files/received/*
 	

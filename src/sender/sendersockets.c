@@ -1,3 +1,4 @@
+#include <protocolutils.h>
 #include "sendersockets.h"
 
 /* 
@@ -35,12 +36,14 @@ int newsendsocket(char *port, char *host){
         exit(1);        
     }
 
-    // connect!   
+    // connect!
 
-    if((status = connect(sockfd, res->ai_addr, res->ai_addrlen)) < 0){
-        fprintf(stderr, "connect error: %s\n", strerror(sockfd));
-        exit(1);    
+    while(connect(sockfd, res->ai_addr, res->ai_addrlen) < 0){
+        debug("Cant connect just yet, waiting 5 seconds before trying again.\n");
+        sleep(5);
     }
+
+    debug("Connect succes!\n");
 
     freeaddrinfo(res); // free the linked-list
 
