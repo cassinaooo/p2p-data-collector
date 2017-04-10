@@ -36,10 +36,14 @@ void sendfiles(){
 
     h = newheader(hostname, file_basename, file_size, cksum(file_to_send));
 
+    char encoded_header[1024];
+    encodeHeader(h, encoded_header);
+
     debug("ENVIANDO HEADER:\n");
+
     printheader(h);
 
-    sent_bytes = send(sockfd, h, sizeof(Header), 0);
+    sent_bytes = send(sockfd, encoded_header, sizeof(encoded_header), 0);
 
     free(h);
 

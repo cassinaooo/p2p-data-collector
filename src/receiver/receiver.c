@@ -7,7 +7,7 @@
 
 void recvfile(){
     int status, sockfd, new_fd;
-    char destination_folder[256], destination_file[256], buffer[BUFSIZ];
+    char destination_folder[256], destination_file[256], buffer[BUFSIZ], encoded_header[1024];
     ssize_t bytes_read;
     __off_t remain_data;
 
@@ -25,13 +25,13 @@ void recvfile(){
     // socket to a new connection, blocks until a connection to PORT is made
     new_fd  = newrecvsocket(sockfd);
 
-    header = malloc(sizeof(Header));
-
-    bytes_read = recv(new_fd, header, sizeof(Header), 0);
+    bytes_read = recv(new_fd, encoded_header, sizeof(encoded_header), 0);
 
     if(bytes_read < 0){
-        error("header recv error: %s\n", strerror(new_fd));
+        error("encoded header recv error: %s\n", strerror(new_fd));
     }
+
+    header = decodeHeader(encoded_header);
 
     debug ("HEADER RECEBIDO\n");
     printheader(header);
@@ -45,8 +45,7 @@ void recvfile(){
     FILE *received_fd = fopen(destination_file, "w");
 
     if (received_fd == NULL){
-        fprintf(stderr, "Failed to open file foo --> %s\n", strerror(errno));
-        exit(EXIT_FAILURE);
+        error("Failed to open file --> %s\n", strerror(errno));
     }
 
     remain_data = header->filesize;

@@ -1,6 +1,9 @@
+#include <protocoltypes.h>
 #include "protocolutils.h"
 
 Header *newheader(const char * clientname, const char * filename, __off_t filesize, const long int checksum){
+
+    debug("attempting to create new header %s %s %ld %ld\n", clientname, filename, filesize, checksum);
     
     Header *new = malloc(sizeof(Header));
 
@@ -56,6 +59,61 @@ unsigned int cksum(const char *filename){
 }
 
 
+Header *decodeHeader(const char *str){
+    char client_name[265], file_name[255], file_size_str[64], checksum_str[64];
+    __off_t file_size;
+    long int checksum;
+
+    int i = 0, break_point;
+
+    while(str[i] != '|'){
+        client_name[i] = str[i];
+        i++;
+    }
+
+    client_name[i] = '\0';
+
+    i++;
+
+    break_point = i;
+
+    while(str[i] != '|'){
+        file_name[i - break_point] = str[i];
+        i++;
+    }
+
+    file_name[i - break_point] = '\0';
+
+    i++;
+
+    break_point = i;
+
+    while(str[i] != '|'){
+        file_size_str[i - break_point] = str[i];
+        i++;
+    }
+
+    file_size_str[i - break_point] = '\0';
+
+    i++;
+
+    break_point = i;
+
+    while(str[i] != '\0'){
+        checksum_str[i - break_point] = str[i];
+        i++;
+    }
+
+    checksum_str[i - break_point] = '\0';
+
+
+    file_size = atol(file_size_str);
+    checksum = atol(checksum_str);
+
+    return newheader(client_name, file_name, file_size, checksum);
+}
+
+
 void debug(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
@@ -72,5 +130,9 @@ void error(char *fmt, ...) {
     vfprintf(stderr, fmt, args);
     va_end(args);
     fflush(stderr);
+}
+
+void encodeHeader(Header *h, char *buf) {
+    sprintf(buf, "%s|%s|%ld|%ld", h->client_name, h->filename, h->filesize, h->checksum);
 }
 

@@ -20,5 +20,8 @@ void debug(const char *fmt, ...);
 
 void error(char *fmt, ...);
 
+Header *decodeHeader(const char *str);
+
+void encodeHeader(Header *h, char *buf);
 
 #endif
