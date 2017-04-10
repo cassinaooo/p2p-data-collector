@@ -25,7 +25,7 @@ A aplicação utilizada do lado do Raspberry é chamada de "sender" nesta arquit
 O sender aguarda um diretório como entrada, no qual todos os arquivos a serem enviados devem estar contidos. O diretório será convertido em um arquivo no diretório pai ```<pasta>_<timestamp>.tar.gz```, de acordo com o horário local no dispositivo sender. 
 Esse arquivo será removido da pasta, assim como os arquivos que o geraram, ao sucesso da transação.
 
-O receiver armazena os dados recebidos no diretório especificado como paramêtro, sendo cada transação sendo armazenada neste diretório como ```<hostname>/<timestamp>/<arquivo>```
+O receiver armazena os dados recebidos no diretório especificado como paramêtro, sendo cada transação sendo armazenada neste diretório como ```<hostname>/<arquivo>```
 
 ### Requisitos 
 
@@ -35,3 +35,33 @@ A aplicação deve garantir:
 2. A integridade e confiabilidade dos dados recebidos pelo receiver.
 3. Que os dispositivos finalizem todas as transações em um estado seguro, sendo bem-sucedidas ou não.
 4. Que a aplicação esteja pronta para uso assim que os dispositivos computacionais sejam inicializados.
+
+### Opcionais 
+
+Requisitos a serem implementados opcionalmente:
+
+1. Integração com o middleware ROS (Robotics Operating System)
+2. Possibilitar a execução arbitrária de código enviado pelo drone no dispositivo sensor
+3. Implementar a aplicação como um serviço UNIX
+
+### Cronograma
+
+1. Projeto (14/04 - 26/04)
+  * projeto de dados/classes
+  * projeto arquitetural
+  * projeto de interface
+  * projeto de componentes
+2. Implementação (27/04 - 11/05)
+  * implementação de dados/classes
+  * implementação de componentes
+3. Testes (12/05 - 18/05)
+  * testes de unidade
+  * testes de integração
+  * testes de sistema
+4. Adicionais (19/05 - 05/06)
+  * projeto
+  * implementação
+  * testes
+5. Testes de Campo (06/05 - 23/06)
+  * sistemas computacionais comuns
+  * drone e raspberry
