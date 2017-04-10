@@ -53,7 +53,7 @@ unsigned int cksum(const char *filename){
     unsigned long size = slurp(filename, &filebytes, 0);
     unsigned int cksum = crc32b(filebytes, size);
 
-    debug("cksum for file %s with %ld bytes long was: %d\n", filename, size, cksum);
+    debug("cksum for file %s with %ld bytes long was: %ud\n", filename, size, cksum);
 
     return cksum;
 }
