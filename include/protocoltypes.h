@@ -7,7 +7,7 @@ typedef struct {
     char client_name[256];
     char filename[256];
     __off_t filesize;
-    long int checksum;
+    unsigned int checksum;
 } Header;
 
 #endif

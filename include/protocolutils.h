@@ -10,7 +10,7 @@
 #include "fileutils.h"
 
 Header *newheader(const char * clientname, const char * filename,
-                  const __off_t filesize, const long int checksum);
+                  const __off_t filesize, const unsigned int checksum);
 
 void printheader(const Header * h);
 

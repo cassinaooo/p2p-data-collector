@@ -64,6 +64,9 @@ void recvfile(){
     // if we dont close the file, the last fwrite isnt done
     fclose(received_fd);
 
+    debug("cksum: %u, size: %ld\n", cksum(destination_file), cksum(destination_file));
+    debug("header cksum: %u, size: %ld\n", header->checksum, sizeof(header->checksum));
+
     if(cksum(destination_file) == header->checksum){
         debug("Checksums match, ending connection.\n");
     }

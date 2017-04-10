@@ -1,7 +1,7 @@
 #include <protocoltypes.h>
 #include "protocolutils.h"
 
-Header *newheader(const char * clientname, const char * filename, __off_t filesize, const long int checksum){
+Header *newheader(const char * clientname, const char * filename, __off_t filesize, const unsigned int checksum){
 
     debug("attempting to create new header %s %s %ld %ld\n", clientname, filename, filesize, checksum);
     
@@ -21,7 +21,7 @@ void printheader(const Header * h){
     debug("clientname: %s\n", h->client_name);
     debug("filename: %s\n", h->filename);
     debug("filesize: %ld\n", h->filesize);
-    debug("checksum: %ud\n", h->checksum);
+    debug("checksum: %u\n", h->checksum);
     debug("%s\n\n", "------ HEADER END -------");
 }
 
@@ -53,7 +53,7 @@ unsigned int cksum(const char *filename){
     unsigned long size = slurp(filename, &filebytes, 0);
     unsigned int cksum = crc32b(filebytes, size);
 
-    debug("cksum for file %s with %ld bytes long was: %ud\n", filename, size, cksum);
+    debug("cksum for file %s with %ld bytes long was: %u\n", filename, size, cksum);
 
     return cksum;
 }
@@ -133,6 +133,6 @@ void error(char *fmt, ...) {
 }
 
 void encodeHeader(Header *h, char *buf) {
-    sprintf(buf, "%s|%s|%ld|%ld", h->client_name, h->filename, h->filesize, h->checksum);
+    sprintf(buf, "%s|%s|%ld|%u", h->client_name, h->filename, h->filesize, h->checksum);
 }
 
