@@ -1,9 +1,9 @@
 #include "sender.h"
 
 #define PORT "35000" // the port to connect to
-#define HOST "localhost" 
+#define HOST "192.168.1.2" 
 // no trailing slashes here, pls
-#define BACKUP_FOLDER "/home/cassiano/redes/files/to_send"
+#define BACKUP_FOLDER "/home/providence/cassiano_proj_redes/files/to_send"
 
 void sendfiles(){
     int sockfd, file_descriptor;
