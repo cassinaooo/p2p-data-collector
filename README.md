@@ -27,7 +27,7 @@ Esse arquivo será removido da pasta, assim como os arquivos que o geraram, ao s
 
 O receiver armazena os dados recebidos no diretório especificado como paramêtro, sendo cada transação sendo armazenada neste diretório como ```<hostname>/<arquivo>```
 
-### Requisitos 
+### Requisitos do MVP
 
 A aplicação deve garantir:
 
@@ -36,7 +36,7 @@ A aplicação deve garantir:
 3. Que os dispositivos finalizem todas as transações em um estado seguro, sendo bem-sucedidas ou não.
 4. Que a aplicação esteja pronta para uso assim que os dispositivos computacionais sejam inicializados.
 
-### Opcionais 
+### Opcionais PoC
 
 Requisitos a serem implementados opcionalmente:
 
