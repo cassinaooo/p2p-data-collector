@@ -66,6 +66,15 @@ unsigned long slurp(char const* path, unsigned char **buf, int add_nul){
     return (long)fsz;
 }
 
+/**
+ * cria uma pasta para salvar os arquivos, e retorna o nome dela
+ * !! essa funcao mudara para retornar <basepath>/<hostname> em breve !!
+ *
+ * @param hostname: o nome do host, exemplo: raspberrypi3
+ * @param basepath o caminho para o diretório raiz, exemplo: /home/drone/files/received
+ * @param resultingfolder: <basepath>/<hostname>/<timestamp>, exemplo: /home/drone/files/received/raspberrypi3/92127812812/
+ */
+
 void makefolder(const char *hostname, const char *basepath, char *resultingfolder){
     char mkdir_command[512];
     char destination_folder[256];
@@ -91,11 +100,26 @@ void makefolder(const char *hostname, const char *basepath, char *resultingfolde
     system(mkdir_command);
 }
 
+/**
+ * desmonta um caminho e retorna a ultima parte antes da ultima barra
+ *
+ * @param absolute_path: caminho absoluto para o arquivo, exemplo: /home/drone/arquivo.txt
+ * @param basename_buf nome do arquivo, exemplo: arquivo.txt
+ */
+
 void getbasename(const char * absolute_path, char * basename_buf){
     char *extracted_base = basename(strdup( absolute_path ));
 
     strcpy(basename_buf, extracted_base);
 }
+
+/**
+ * concatena basepath e filename
+ *
+ * @param basepath exemplo: /home/drone/files/received
+ * @param filename exemplo: arquivo.txt
+ * @param resulting_filename exemplo: /home/drone/files/received/arquivo.txt
+ */
 
 void getfinalfilename(const char * basepath, const char * filename, char * resulting_filename){
     char destination[256];
@@ -109,10 +133,13 @@ void getfinalfilename(const char * basepath, const char * filename, char * resul
     strcpy(resulting_filename, destination);
 }
 
-/*
-    runs a shell command in the form 
-    tar cvf <compressed_filename>_<unix_timestamp>.tar.gz <foldername>
-*/
+/**
+ * roda um comando no sistema na forma, para comprimir uma pasta
+ * tar cvf <compressed_filename>_<unix_timestamp>.tar.gz <foldername>
+ *
+ * @param foldername a pasta que deve ser comprimida
+ * @param compressed_filename: o caminho absoluto para o arquivo recem criado
+ */
 
 void compress(char const* foldername, char * compressed_filename){
     char destination[256];
@@ -144,14 +171,12 @@ void compress(char const* foldername, char * compressed_filename){
     strcpy(compressed_filename, destination);
 }
 
-unsigned int checksum(void *buffer, size_t len, unsigned int seed){
-    unsigned char *buf = (unsigned char *)buffer;
-    size_t i;
-
-    for (i = 0; i < len; ++i)
-        seed += (unsigned int)(*buf++);
-    return seed;
-}
+/**
+ * pega o file: descriptor de um arquivo
+ * @param path: caminho para o arquivo
+ * @param fd: o descriptor
+ * @return o tamanho do arquivo
+ */
 
 __off_t getfd(const char *path, int *fd){
     struct stat file_stat;

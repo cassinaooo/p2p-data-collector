@@ -5,6 +5,13 @@
 // no trailing slashes here, pls
 #define BACKUP_FOLDER "/home/providence/cassiano_proj_redes/files/to_send"
 
+/**
+ * comprime o conteudo do diretorio BACKUP_FOLDER
+ * e tenta envia-lo para HOST na porta PORT
+ * atenta conexoes de 5 em 5 segundos, imprimindo uma mensagem em caso de falha
+ * ou de sucesso, em sucesso, inicia a transmissao dos arquivos
+ */
+
 void sendfiles(){
     int sockfd, file_descriptor;
     long file_size;

@@ -1,12 +1,35 @@
 #include <protocolutils.h>
 #include "sendersockets.h"
 
-/* 
+
+/**
+ *
+ * !!!! NAO IMPLEMENTADO, NAO FUNCIONANDO !!!!
+ *
+ * especifica a quantidade maxima de saltos que devem ser realizados entre hosts para o
+ * transito de pacotes enviados utilizando o socket descrito por sock
+ *
+ * pretendo setar pra um, para que a existencia de um outro dispositivo na rede
+ * para debugar i.e notebook do experimentador, nao interfira na transmissao dos dados
+ * servindo como uma ponte entre os hosts
+ *
+ * @param sock, socket file descriptor
+ * @param ttl, numero maximo de saltos que os pacotes podem realizar
+ */
+
+// TODO
+
+void setttl(int sock, uint8_t ttl){
+    int ret = setsockopt(sock, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(uint8_t));
+    if (ret != 0)
+        printf("Failed to setsockopt(): %s\n", strerror(errno));
+}
+
+
+/**
     returns a socket ready to make send calls
     to a specific port in a host
-*/
-
-void setttl(int sock, uint8_t ttl);
+**/
 
 int newsendsocket(char *port, char *host){
     int status;
@@ -54,10 +77,5 @@ int newsendsocket(char *port, char *host){
     return sockfd;
 }
 
-void setttl(int sock, uint8_t ttl){
-    int ret = setsockopt(sock, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(uint8_t));
-    if (ret != 0)
-        printf("Failed to setsockopt(): %s\n", strerror(errno));
-}
 
 

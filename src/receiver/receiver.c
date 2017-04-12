@@ -5,6 +5,12 @@
 #define BACKLOG 10     // how many pending connections queue will hold
 #define ROOT_DIR "/home/cassiano/redes/files/received"
 
+
+/**
+ * aguarda conexoes na porta PORT, ate um connect ser realizado do outro lado
+ * apos isso recupera todos os dados enviados do sender e os salva na pasta ROOT_DIR, com
+ * o host que as enviou propriamente identificado, mais info em protocolutils.h e fileutils.h
+ */
 void recvfile(){
     int status, sockfd, new_fd;
     char destination_folder[256], destination_file[256], buffer[BUFSIZ], encoded_header[1024];

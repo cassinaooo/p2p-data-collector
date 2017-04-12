@@ -1,9 +1,9 @@
 #include "receiversockets.h"
 
-/*
+/**
     returns the socket file descriptor in wich the
     server will accept connections
-*/
+**/
 
 int newlistensocket(char *port){
     int sockfd;
@@ -48,11 +48,11 @@ int newlistensocket(char *port){
     return sockfd;
 }
 
-/*
+/**
     returns the socket file descriptor connected to a
     client that can be used to recv() data
     uses the sockfd from newlistensocket()
-*/
+**/
 
 int newrecvsocket(int sockfd){
     struct sockaddr_storage their_addr;
