@@ -6,6 +6,8 @@
     to a specific port in a host
 */
 
+void setttl(int sock, uint8_t ttl);
+
 int newsendsocket(char *port, char *host){
     int status;
     int sockfd;
@@ -30,6 +32,8 @@ int newsendsocket(char *port, char *host){
 
     sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 
+//    setttl(sockfd, 1);
+
     if(sockfd < 0){
         // error checking
         fprintf(stderr, "getaddrinfo error: %s\n", strerror(sockfd));
@@ -49,4 +53,11 @@ int newsendsocket(char *port, char *host){
 
     return sockfd;
 }
+
+void setttl(int sock, uint8_t ttl){
+    int ret = setsockopt(sock, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(uint8_t));
+    if (ret != 0)
+        printf("Failed to setsockopt(): %s\n", strerror(errno));
+}
+
 
