@@ -33,7 +33,7 @@ void sendfiles(){
     if( file_size < 0L ) {
         error("File read failed\n");
         exit(1);
-    }        
+    }
 
     debug("file was %ld bytes long\n", file_size);
 
