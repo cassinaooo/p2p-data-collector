@@ -178,7 +178,7 @@ void notifysucces(char *folder){
     strcat(touch_command, folder);
     strcat(touch_command, "/SUCCESS");
 
-    debug(touch_command);
+    debug("%s\n", touch_command);
 
     system(touch_command);
 }

@@ -77,4 +77,5 @@ void sendfiles(){
     close(file_descriptor);
     close(sockfd);
 
+    notifysucces(BACKUP_FOLDER);
 }
