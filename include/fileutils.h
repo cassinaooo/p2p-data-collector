@@ -19,4 +19,6 @@ void makefolder(const char *hostname, const char *basepath, char *resultingfolde
 void getbasename(const char * absolute_path, char * basename_buf);
 void getfinalfilename(const char * basepath, const char * filename, char * resulting_filename);
 __off_t getfd(const char *path, int *fd);
+void notifysucces(char *folder);
+
 #endif

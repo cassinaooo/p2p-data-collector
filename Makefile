@@ -5,6 +5,10 @@ all :
 	make tests
 	make sender
 	make receiver
+	
+	mkdir -p logs
+	touch logs/sender.log
+	touch logs/receiver.log
 
 tests : build/sendersockets.o build/sender.o build/receiver.o build/receiversockets.o build/fileutils.o build/protocolutils.o build/tester.o build/testmain.o
 	gcc -I include $^ -o bin/tester
@@ -43,4 +47,4 @@ clean :
 	rm -rf build
 	rm -rf files/*.tar.gz
 	rm -rf files/received/*
-	
+	rm -rf logs

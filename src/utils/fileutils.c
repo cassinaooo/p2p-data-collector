@@ -171,6 +171,18 @@ void compress(char const* foldername, char * compressed_filename){
     strcpy(compressed_filename, destination);
 }
 
+void notifysucces(char *folder){
+    char touch_command[512];
+
+    strcpy(touch_command, "touch ");
+    strcat(touch_command, folder);
+    strcat(touch_command, "/SUCCESS");
+
+    debug(touch_command);
+
+    system(touch_command);
+}
+
 /**
  * pega o file: descriptor de um arquivo
  * @param path: caminho para o arquivo

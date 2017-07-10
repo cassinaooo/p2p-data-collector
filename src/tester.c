@@ -1,5 +1,8 @@
 #include <protocoltypes.h>
 #include "tester.h"
+#include "fileutils.h"
+
+#define BACKUP_FOLDER "/home/cassiano/redes_git_repo/files/to_send"
 
 void testHeaderDecoding(){
     Header *h;
@@ -44,5 +47,5 @@ void testHeaderEncodingDecoding(){
 }
 
 void test(){
-    testHeaderEncodingDecoding();
+    notifysucces(BACKUP_FOLDER);
 }
