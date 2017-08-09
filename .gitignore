@@ -32,8 +32,6 @@
 *.dSYM/
 *.su
 
-*.pdf
-
 bin/*
 .idea/*
 cmake-build-debug/*
